@@ -3,7 +3,7 @@
 #
 # Sebastian Raschka 2014
 #
-# Python 3.x script that inserts a table of contents
+# Python script that inserts a table of contents
 # into markdown documents and creates the required
 # internal links.
 #
@@ -185,7 +185,7 @@ def write_markdown(out_file, toc_headlines, body, spacer=0):
 
 
 parser = argparse.ArgumentParser(
-    description='Python 3.x script that inserts a table of contents\n'\
+    description='Python script that inserts a table of contents\n'\
             'into markdown documents and creates the required internal links.',
     epilog="""Example:
 markdown-toclify.py ~/Desktop/input.md  ~/Desktop/output.md
