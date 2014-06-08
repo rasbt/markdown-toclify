@@ -10,10 +10,12 @@
 # For more information about how internal links
 # in HTML and Markdown documents work, please see
 #
-# Creating a table of contents with internal links in IPython Notebooks and Markdown documents
+# Creating a table of contents with internal links in 
+# IPython Notebooks and Markdown documents:
 # http://sebastianraschka.com/Articles/2014_ipython_internal_links.html
 #
-# Updates for this script will be available at https://github.com/rasbt/markdown-toclify
+# Updates for this script will be available at 
+# https://github.com/rasbt/markdown-toclify
 #
 #
 # E.g., the structure of the table of contents
@@ -45,7 +47,7 @@
 
 import argparse
 
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 
 def dashify_headline(line):
     """
@@ -179,48 +181,58 @@ def write_markdown(out_file, toc_headlines, body, spacer=0):
 
 
 
-########################
-### argparse section ###
-########################
+if __name__ == '__main__':
 
+    parser = argparse.ArgumentParser(
+            description='Python script that inserts a table of contents\n'\
+                    'into markdown documents and creates the required internal links.',
+            epilog="""    Example:
+    markdown-toclify.py ~/Desktop/input.md  ~/Desktop/output.md
 
-parser = argparse.ArgumentParser(
-    description='Python script that inserts a table of contents\n'\
-            'into markdown documents and creates the required internal links.',
-    epilog="""Example:
-markdown-toclify.py ~/Desktop/input.md  ~/Desktop/output.md
+    For more information about how internal links in
+    HTML and Markdown documents work
+    please see:
+    "Creating a table of contents with internal
+     links in IPython Notebooks and Markdown documents"
+    (http://sebastianraschka.com/Articles/2014_ipython_internal_links.html)
 
-For more information about how internal links in
-HTML and Markdown documents work
-please see:
-"Creating a table of contents with internal
- links in IPython Notebooks and Markdown documents"
-(http://sebastianraschka.com/Articles/2014_ipython_internal_links.html)
+    Updates for this script will be available at 
+    https://github.com/rasbt/markdown-toclify
 
-Updates for this script will be available at https://github.com/rasbt/markdown-toclify
-
-""",
-    formatter_class=argparse.RawTextHelpFormatter
+    """,
+        formatter_class=argparse.RawTextHelpFormatter
     )
 
+    parser.add_argument('InputFile', 
+            metavar=('input.md'), 
+            help='Path to the Markdown input file.'
+            )
+    parser.add_argument('OutputFile', 
+            metavar=('output.md'),
+            help='Path to the Markdown output file.'
+            )
+    parser.add_argument('-b', '--back_to_top', 
+            action='store_true', 
+            help='Adds [back to top] links.'
+            )
+    parser.add_argument('-s', '--spacer', 
+            default=0, 
+            type=int, 
+            metavar=('pixels'),
+            help='Adds horizontal space (in pixels) after the table of contents'
+            )
+    parser.add_argument('-v', '--version', 
+            action='version', 
+            version='%s' %__version__
+            )
 
-parser.add_argument('InputFile', help='Path to the Markdown input file.')
-parser.add_argument('OutputFile', help='Path to the Markdown output file.')
-parser.add_argument('-b', '--back_to_top', action='store_true', help='Adds [back to top] links.')
-parser.add_argument('-s', '--spacer', default=0, type=int, metavar=('pixels'),
-                help='Adds horizontal space (in pixels) after the table of contents')
-parser.add_argument('-v', '--version', action='version', version='%s' %__version__)
+    args = parser.parse_args()
 
-args = parser.parse_args()
+    raw_contents = get_lines(args.InputFile)
+    tagged_contents, raw_headlines = tag_and_collect(raw_contents)
+    processed_headlines = create_toc(raw_headlines)
 
-in_filename = args.InputFile
-out_filename = args.OutputFile
+    if args.back_to_top:
+        processed_headlines, tagged_contents = add_backtotop(processed_headlines, tagged_contents)
 
-raw_contents = get_lines(in_filename)
-tagged_contents, raw_headlines = tag_and_collect(raw_contents)
-processed_headlines = create_toc(raw_headlines)
-
-if args.back_to_top:
-    processed_headlines, tagged_contents = add_backtotop(processed_headlines, tagged_contents)
-
-write_markdown(out_filename, processed_headlines, tagged_contents, args.spacer)
+    write_markdown(args.OutputFile, processed_headlines, tagged_contents, args.spacer)
