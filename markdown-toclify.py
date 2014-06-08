@@ -45,6 +45,8 @@
 
 import argparse
 
+__version__ = '1.0.0'
+
 def dashify_headline(line):
     """
     Takes a header line from a Markdown document and
@@ -149,7 +151,7 @@ def add_backtotop(toc_headlines, body):
     return toc_processed, processed
 
 
-def write_markdown(out_file, toc_headlines, body):
+def write_markdown(out_file, toc_headlines, body, spacer=0):
     """
     Writes the Markdown output file with the table of
     contents.
@@ -161,11 +163,15 @@ def write_markdown(out_file, toc_headlines, body):
         body: contents of the Markdown file including
             ID-anchor tags as returned by the
             tag_and_collect function.
+        spacer: Adds vertical space after the table
+            of contents. Height in pixels.
 
     """
     with open(out_file, 'w') as out:
         for line in toc_headlines:
             out.write(line + '\n')
+        if spacer:
+            out.write('\n<div style="height:%spx;"></div>\n' %(spacer))
         out.write(4 * '\n')
         for line in body:
             out.write(line + '\n')
@@ -201,13 +207,14 @@ Updates for this script will be available at https://github.com/rasbt/markdown-t
 parser.add_argument('InputFile', help='Path to the Markdown input file.')
 parser.add_argument('OutputFile', help='Path to the Markdown output file.')
 parser.add_argument('-b', '--back_to_top', action='store_true', help='Adds [back to top] links.')
-
+parser.add_argument('-s', '--spacer', default=0, type=int, metavar=('pixels'),
+                help='Adds horizontal space (in pixels) after the table of contents')
+parser.add_argument('-v', '--version', action='version', version='%s' %__version__)
 
 args = parser.parse_args()
 
 in_filename = args.InputFile
 out_filename = args.OutputFile
-
 
 raw_contents = get_lines(in_filename)
 tagged_contents, raw_headlines = tag_and_collect(raw_contents)
@@ -216,4 +223,4 @@ processed_headlines = create_toc(raw_headlines)
 if args.back_to_top:
     processed_headlines, tagged_contents = add_backtotop(processed_headlines, tagged_contents)
 
-write_markdown(out_filename, processed_headlines, tagged_contents)
+write_markdown(out_filename, processed_headlines, tagged_contents, args.spacer)
