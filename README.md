@@ -7,7 +7,7 @@ markdown-toclify is a Python command line script that adds a **Table of Contents
 
 **Requires:**  
 
-- [Python 3.x](https://www.python.org/downloads/)
+- [Python 2.7.x or 3.x](https://www.python.org/downloads/)
 - [argparse](https://pypi.python.org/pypi/argparse)
 
 
