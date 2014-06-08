@@ -16,7 +16,7 @@
 # Updates for this script will be available at https://github.com/rasbt/markdown-toclify
 #
 #
-# E.g., the structure of the table of contents 
+# E.g., the structure of the table of contents
 # in Markdown syntax would look like this:
 #
 ########################################################
@@ -47,16 +47,16 @@ import argparse
 
 def dashify_headline(line):
     """
-    Takes a header line from a Markdown document and 
+    Takes a header line from a Markdown document and
     returns a tuple of the
-        '#'-stripped version of the head line, 
+        '#'-stripped version of the head line,
         a string version for <a id=''></a> anchor tags,
         and the level of the headline as integer.
-    
-    E.g., 
+
+    E.g.,
     dashify_headline('### some header lvl3')
     ('Some header lvl3', 'some-header-lvl3', 3)
-    
+
     """
     stripped_pound = line.strip('#')
     level = len(line) - len(stripped_pound)
@@ -69,7 +69,7 @@ def get_lines(in_filename):
     """
     Returns contents of a text file as list
     of sublists that represent individual lines.
-    
+
     """
     with open(in_filename, 'r') as in_file:
         in_contents = in_file.read().split('\n')
@@ -79,29 +79,29 @@ def get_lines(in_filename):
 def tag_and_collect(in_contents):
     """
     Creates and adds ID-anchor tags to a Markdown document content.
-    
+
     Keyword arguments:
         in_contents: a list of sublists where every sublist
             represents a line from a Markdown document.
-    
+
     Returns a tuple of 2 lists:
-        1st list: 
+        1st list:
             A modified version of the input list where
             <a id="some-header"></a> anchor tags where inserted
             above the header lines.
-            
-        2nd list: 
+
+        2nd list:
             A list of 2-value tuples, where the first value
             represents the string that was inserted assigned
             to the IDs in the anchor tags, and the second value
             is an integer that reprents the headline level.
-            E.g., 
+            E.g.,
             [('some header lvl3', 'some-header-lvl3', 3), ...]
-            
+
     """
     out_contents = []
     headlines = []
-    
+
     for line in in_contents:
         if line.startswith(('<a id', '[[back to top](#table-of-contents)]')):
             continue
@@ -109,12 +109,12 @@ def tag_and_collect(in_contents):
         elif line.startswith('#'):
             stripped, dashed, level = dashify_headline(line)
             id_tag = '<a id="%s"></a>' %(dashed)
-    
+
             headlines.append((stripped, dashed, level))
             out_contents.append(id_tag)
-    
+
         out_contents.append(line)
-        
+
     return out_contents, headlines
 
 
@@ -125,7 +125,7 @@ def create_toc(headlines):
     and returns a list of headlines for a table of contents
     in Markdown format,
     e.g., ['        - [Some header lvl3](#Some-header-lvl3)', ...]
-    
+
     """
     processed = ['#Table of Contents']
     for line in headlines:
@@ -138,7 +138,7 @@ def add_backtotop(toc_headlines, body):
     """
     Adds internal "[back to top]" links to the Markdown document for
     jumping back to the table of contents.
-    
+
     """
     toc_processed = ['<a id="table-of-contents"></a>\n'] + toc_headlines[:]
     processed = []
@@ -153,7 +153,7 @@ def write_markdown(out_file, toc_headlines, body):
     """
     Writes the Markdown output file with the table of
     contents.
-    
+
     Keyword arguments:
         out_file: Path to the output file.
         toc_headlines: lines for the table of contents
@@ -161,12 +161,11 @@ def write_markdown(out_file, toc_headlines, body):
         body: contents of the Markdown file including
             ID-anchor tags as returned by the
             tag_and_collect function.
-    
+
     """
     with open(out_file, 'w') as out:
         for line in toc_headlines:
             out.write(line + '\n')
-        out.write(4 * '<br>')
         out.write(4 * '\n')
         for line in body:
             out.write(line + '\n')
@@ -185,7 +184,7 @@ parser = argparse.ArgumentParser(
     epilog="""Example:
 markdown-toclify.py ~/Desktop/input.md  ~/Desktop/output.md
 
-For more information about how internal links in 
+For more information about how internal links in
 HTML and Markdown documents work
 please see:
 "Creating a table of contents with internal
