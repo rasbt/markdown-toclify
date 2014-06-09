@@ -56,7 +56,6 @@ def dashify_headline(line):
         '#'-stripped version of the head line,
         a string version for <a id=''></a> anchor tags,
         and the level of the headline as integer.
-
     E.g.,
     dashify_headline('### some header lvl3')
     ('Some header lvl3', 'some-header-lvl3', 3)
@@ -105,7 +104,6 @@ def tag_and_collect(in_contents):
     """
     out_contents = []
     headlines = []
-
     for line in in_contents:
         if line.startswith(('<a id', '[[back to top](#table-of-contents)]')):
             continue
@@ -113,12 +111,9 @@ def tag_and_collect(in_contents):
         elif line.startswith('#'):
             stripped, dashed, level = dashify_headline(line)
             id_tag = '<a id="%s"></a>' %(dashed)
-
             headlines.append((stripped, dashed, level))
             out_contents.append(id_tag)
-
         out_contents.append(line)
-
     return out_contents, headlines
 
 
@@ -243,6 +238,5 @@ if __name__ == '__main__':
 
     if args.back_to_top:
         processed_headlines, tagged_contents = add_backtotop(processed_headlines, tagged_contents)
-
     cont = build_markdown(processed_headlines, tagged_contents, args.spacer)
     output_markdown(cont, args.output)
