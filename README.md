@@ -39,7 +39,7 @@ The modified Markdown contents can be written directly to an output file instead
 	
 Internal "back-to-top" links can be added below each headline for jumping back to the table of contents via the optional `-b` tag. 
 
-	./markdown-toclify.py input.md output.md -b
+	./markdown-toclify.py input.md -o output.md -b
 	
 <br>
 
@@ -86,7 +86,7 @@ Command:
 
 Command:
 
-	./markdown-toclify.py input.md output.md -b -s 100
+	./markdown-toclify.py input.md -o output.md -b -s 100
 	
 <br>
 
