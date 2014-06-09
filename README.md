@@ -15,23 +15,39 @@ markdown-toclify is a Python command line script that adds a **Table of Contents
 
 #Usage:
 
-The usage is quite simple, you just need to provide an Markdown-formatted input file and a file name for the output file that is to be generated.
+The usage is quite simple, you just need to provide a Markdown-formatted input file and the modified Markdown contents will be printed to the standard output screen. 
 
-	./markdown-toclify.py input.md output.md
+
+	./markdown-toclify.py input.md
 	
 <br>
 
-#### Optional arguments
+## Optional arguments
+
+<br>
+
+#### Writing to output files directly
+
+The modified Markdown contents can be written directly to an output file instead of printing it to the standard output screen: 
 	
-You can also add additional internal back-to-top links via the optional `-b` tag.- 
+	./markdown-toclify.py input.md -o output.md 
+	
+<br>
+	
+#### Adding "back to top" links
+
+	
+Internal "back-to-top" links can be added below each headline for jumping back to the table of contents via the optional `-b` tag. 
 
 	./markdown-toclify.py input.md output.md -b
 	
+<br>
 
-<br> 
-Use the `-s` (`--spacer`) flag if you want to add additional vertical space (in pixels) after the table of contents.
+#### Adding vertical space after the table of contents
+ 
+The `-s` (`--spacer`) adds additional vertical space (in pixels) after the table of contents.
 	
-	./markdown-toclify.py input.md output.md -s 100
+	./markdown-toclify.py input.md -o output.md -s 100
 
 <br>
 
@@ -52,11 +68,11 @@ Use the `-s` (`--spacer`) flag if you want to add additional vertical space (in 
 <br>
 <br>
 
-## Output file
+## Simple output file
 
 Command:
 
-	./markdown-toclify.py input.md output.md
+	./markdown-toclify.py input.md -o output.md
 
 <br>
 

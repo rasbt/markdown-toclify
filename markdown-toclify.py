@@ -38,16 +38,16 @@
 #
 ########################################################
 #
+#
 # USAGE:
-#
-# markdown-toclify.py input.md output.md
-#
+# 
+# markdown-toclify.py input.md -o output.md
 #
 #
 
 import argparse
 
-__version__ = '1.0.1'
+__version__ = '1.1.0'
 
 def dashify_headline(line):
     """
@@ -153,13 +153,12 @@ def add_backtotop(toc_headlines, body):
     return toc_processed, processed
 
 
-def write_markdown(out_file, toc_headlines, body, spacer=0):
+def build_markdown(toc_headlines, body, spacer=0):
     """
-    Writes the Markdown output file with the table of
-    contents.
+    Returns a string with the Markdown output contents incl. 
+    the table of contents.
 
     Keyword arguments:
-        out_file: Path to the output file.
         toc_headlines: lines for the table of contents
             as created by the create_toc function.
         body: contents of the Markdown file including
@@ -169,16 +168,25 @@ def write_markdown(out_file, toc_headlines, body, spacer=0):
             of contents. Height in pixels.
 
     """
-    with open(out_file, 'w') as out:
-        for line in toc_headlines:
-            out.write(line + '\n')
-        if spacer:
-            out.write('\n<div style="height:%spx;"></div>\n' %(spacer))
-        out.write(4 * '\n')
-        for line in body:
-            out.write(line + '\n')
+    if spacer:
+        spacer_line = ['\n<div style="height:%spx;"></div>\n' %(spacer)]
+        markdown = "\n".join(toc_headlines + spacer_line + body)
+    else:
+        markdown = "\n".join(toc_headlines + body)
+    return markdown
 
 
+def output_markdown(markdown_cont, outfile=None):
+    """
+    Prints markdown contents to the standard output screen, or
+    writes to an output file if `outfile` is a valid path.
+
+    """
+    if outfile: 
+        with open(outfile, 'w') as out:
+            out.write(markdown_cont)
+    else:
+        print(markdown_cont)
 
 
 if __name__ == '__main__':
@@ -187,7 +195,7 @@ if __name__ == '__main__':
             description='Python script that inserts a table of contents\n'\
                     'into markdown documents and creates the required internal links.',
             epilog="""    Example:
-    markdown-toclify.py ~/Desktop/input.md  ~/Desktop/output.md
+    markdown-toclify.py ~/Desktop/input.md -o ~/Desktop/output.md
 
     For more information about how internal links in
     HTML and Markdown documents work
@@ -204,11 +212,12 @@ if __name__ == '__main__':
     )
 
     parser.add_argument('InputFile', 
-            metavar=('input.md'), 
+            metavar='input.md', 
             help='Path to the Markdown input file.'
             )
-    parser.add_argument('OutputFile', 
-            metavar=('output.md'),
+    parser.add_argument('-o', '--output', 
+            metavar='output.md',
+            default=None,
             help='Path to the Markdown output file.'
             )
     parser.add_argument('-b', '--back_to_top', 
@@ -218,7 +227,7 @@ if __name__ == '__main__':
     parser.add_argument('-s', '--spacer', 
             default=0, 
             type=int, 
-            metavar=('pixels'),
+            metavar='pixels',
             help='Adds horizontal space (in pixels) after the table of contents'
             )
     parser.add_argument('-v', '--version', 
@@ -235,4 +244,5 @@ if __name__ == '__main__':
     if args.back_to_top:
         processed_headlines, tagged_contents = add_backtotop(processed_headlines, tagged_contents)
 
-    write_markdown(args.OutputFile, processed_headlines, tagged_contents, args.spacer)
+    cont = build_markdown(processed_headlines, tagged_contents, args.spacer)
+    output_markdown(cont, args.output)
