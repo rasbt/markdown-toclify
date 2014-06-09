@@ -24,34 +24,25 @@ The usage is quite simple, you just need to provide a Markdown-formatted input f
 
 ## Optional arguments
 
-<br>
+<pre>
+optional arguments:
+  -h, --help            show this help message and exit
+  -o output.md, --output output.md
+                        path to the Markdown output file
+  -b, --back_to_top     add [back to top] links.
+  -s pixels, --spacer pixels
+                        add horizontal space (in pixels) after the table of contents
+  -n, --nolink          create the table of contents without internal links
+  -v, --version         show program's version number and exit
+</pre>
 
-#### Writing to output files directly
-
-The modified Markdown contents can be written directly to an output file instead of printing it to the standard output screen: 
-	
-	./markdown-toclify.py input.md -o output.md 
-	
-<br>
-	
-#### Adding "back to top" links
-
-	
-Internal "back-to-top" links can be added below each headline for jumping back to the table of contents via the optional `-b` tag. 
-
-	./markdown-toclify.py input.md -o output.md -b
-	
-<br>
-
-#### Adding vertical space after the table of contents
- 
-The `-s` (`--spacer`) adds additional vertical space (in pixels) after the table of contents.
-	
-	./markdown-toclify.py input.md -o output.md -s 100
 
 <br>
 
-**Examples for the in- and outputs are shown in the section below.**
+
+
+
+
 
 
 <br>

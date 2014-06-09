@@ -117,18 +117,28 @@ def tag_and_collect(in_contents):
     return out_contents, headlines
 
 
-def create_toc(headlines):
+def create_toc(headlines, hyperlink=True):
     """
-    Takes a list of tuples,
-    e.g., ('Some header lvl3', 'Some-header-lvl3', 3)
-    and returns a list of headlines for a table of contents
+    Creates the table of contents from the headline list
+    that was returned by the tag_and_collect function.
+
+    Keyword Arguments:
+        headlines: list of tuples  
+            e.g., ('Some header lvl3', 'Some-header-lvl3', 3)
+        hyperlink: Creates hyperlinks in Markdown format if True,
+            e.g., '- [Some header lvl1](#Some-header-lvl1)'
+
+    Returns  a list of headlines for a table of contents
     in Markdown format,
     e.g., ['        - [Some header lvl3](#Some-header-lvl3)', ...]
 
     """
     processed = ['#Table of Contents']
     for line in headlines:
-        item = '%s- [%s](#%s)' %((line[2]-1)*'    ', line[0], line[1])
+        if hyperlink:
+            item = '%s- [%s](#%s)' %((line[2]-1)*'    ', line[0], line[1])
+        else:
+            item = '%s- %s' %((line[2]-1)*'    ', line[0])
         processed.append(item)
     return processed
 
@@ -208,23 +218,28 @@ if __name__ == '__main__':
 
     parser.add_argument('InputFile', 
             metavar='input.md', 
-            help='Path to the Markdown input file.'
+            help='path to the Markdown input file'
             )
     parser.add_argument('-o', '--output', 
             metavar='output.md',
             default=None,
-            help='Path to the Markdown output file.'
+            help='path to the Markdown output file'
             )
     parser.add_argument('-b', '--back_to_top', 
             action='store_true', 
-            help='Adds [back to top] links.'
+            help='add [back to top] links.'
             )
     parser.add_argument('-s', '--spacer', 
             default=0, 
             type=int, 
             metavar='pixels',
-            help='Adds horizontal space (in pixels) after the table of contents'
+            help='add horizontal space (in pixels) after the table of contents'
             )
+    parser.add_argument('-n', '--nolink', 
+            action='store_true', 
+            help='create the table of contents without internal links'
+            )
+
     parser.add_argument('-v', '--version', 
             action='version', 
             version='%s' %__version__
@@ -233,10 +248,15 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     raw_contents = get_lines(args.InputFile)
-    tagged_contents, raw_headlines = tag_and_collect(raw_contents)
-    processed_headlines = create_toc(raw_headlines)
+    processed_contents, raw_headlines = tag_and_collect(raw_contents)
+    
+    processed_headlines = create_toc(raw_headlines, hyperlink=not args.nolink)
+
+    if args.nolink:
+        processed_contents = raw_contents
 
     if args.back_to_top:
-        processed_headlines, tagged_contents = add_backtotop(processed_headlines, tagged_contents)
-    cont = build_markdown(processed_headlines, tagged_contents, args.spacer)
+        processed_headlines, processed_contents = add_backtotop(processed_headlines, processed_contents)
+    
+    cont = build_markdown(processed_headlines, processed_contents, args.spacer)
     output_markdown(cont, args.output)
