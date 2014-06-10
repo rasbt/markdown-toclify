@@ -1,0 +1,5 @@
+Version 1.2.0
+----------------
+
+- support for "closed" atx-style headers, 
+  e.g., `### This is an H3 ######`

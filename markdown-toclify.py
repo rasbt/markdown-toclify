@@ -61,12 +61,12 @@ def dashify_headline(line):
     ('Some header lvl3', 'some-header-lvl3', 3)
 
     """
-    stripped_pound = line.strip('#')
-    level = len(line) - len(stripped_pound)
-    stripped_space = stripped_pound.strip()
-    dashified = "-".join(stripped_space.split(' '))
-    return stripped_space, dashified, level
-
+    stripped_right = line.rstrip('#')
+    stripped_both = stripped_right.lstrip('#')
+    level = len(stripped_right) - len(stripped_both)
+    stripped_wspace = stripped_both.strip()
+    dashified = "-".join(stripped_wspace.split(' '))
+    return stripped_wspace, dashified, level
 
 def get_lines(in_filename):
     """
