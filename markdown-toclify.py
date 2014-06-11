@@ -62,13 +62,14 @@ def dashify_headline(line):
 
     """
     stripped_right = line.rstrip('#')
+    level = stripped_right.count('#')
     stripped_both = stripped_right.lstrip('#')
-    level = len(stripped_right) - len(stripped_both)
     stripped_wspace = stripped_both.strip()
     dashified = "-".join(stripped_wspace.split(' '))
     if level > 6:   # HTML supports headlines only up to <h6>
         level = 6
     return stripped_wspace, dashified, level
+
 
 def get_lines(in_filename):
     """
