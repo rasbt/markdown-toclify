@@ -1,3 +1,12 @@
+Version 1.2.1
+----------------
+
+- turn headlines with 7 pounds (`####### headline`) into a 
+level 6-nested headline since HTML only supports headlines
+1-6 (`<h1>, <h2>, ... , <h6>`)
+
+
+
 Version 1.2.0
 ----------------
 
