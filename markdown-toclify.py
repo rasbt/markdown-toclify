@@ -123,7 +123,6 @@ def tag_and_collect(in_contents, github=False):
             stripped, dashed, level = dashify_headline(line)
             id_tag = '<a id="%s"></a>' %(dashed)
             headlines.append((stripped, dashed, level))
-            print('idtag', id_tag)
             if not github:
                 out_contents.append(id_tag)
 
