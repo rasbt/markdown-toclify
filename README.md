@@ -7,7 +7,7 @@ markdown-toclify is a Python command line script that adds a **Table of Contents
 <hr>
 
 
-- [Usage:](#usage:)
+- [Usage](#usage)
     - [Optional arguments](#optional-arguments)
 - [Examples](#examples)
     - [Input file](#input-file)
@@ -23,7 +23,7 @@ markdown-toclify is a Python command line script that adds a **Table of Contents
 
 
 
-# Usage:
+# Usage
 [[back to top](#markdown-toclify)]
 
 The usage is quite simple, you just need to provide a Markdown-formatted input file and the modified Markdown contents will be printed to the standard output screen. 
