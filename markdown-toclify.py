@@ -66,6 +66,7 @@ def dashify_headline(line):
     stripped_both = stripped_right.lstrip('#')
     stripped_wspace = stripped_both.strip()
     dashified = "-".join(stripped_wspace.split(' '))
+    dashified = dashified.lower()
     if level > 6:   # HTML supports headlines only up to <h6>
         level = 6
     return stripped_wspace, dashified, level
@@ -82,19 +83,20 @@ def get_lines(in_filename):
     return in_contents
 
 
-def tag_and_collect(in_contents):
+def tag_and_collect(in_contents, github=False):
     """
     Creates and adds ID-anchor tags to a Markdown document content.
 
     Keyword arguments:
         in_contents: a list of sublists where every sublist
             represents a line from a Markdown document.
+        github: If true, creates Github-compatible markdown (omits the <a id> tags)
 
     Returns a tuple of 2 lists:
         1st list:
             A modified version of the input list where
             <a id="some-header"></a> anchor tags where inserted
-            above the header lines.
+            above the header lines (if github is False).
 
         2nd list:
             A list of 2-value tuples, where the first value
@@ -115,7 +117,10 @@ def tag_and_collect(in_contents):
             stripped, dashed, level = dashify_headline(line)
             id_tag = '<a id="%s"></a>' %(dashed)
             headlines.append((stripped, dashed, level))
-            out_contents.append(id_tag)
+            
+            if not github:
+                out_contents.append(id_tag)
+
         out_contents.append(line)
     return out_contents, headlines
 
@@ -143,16 +148,20 @@ def create_toc(headlines, hyperlink=True):
         else:
             item = '%s- %s' %((line[2]-1)*'    ', line[0])
         processed.append(item)
+    processed.append('\n')
     return processed
 
 
-def add_backtotop(toc_headlines, body):
+def add_backtotop(toc_headlines, body, github=False):
     """
     Adds internal "[back to top]" links to the Markdown document for
     jumping back to the table of contents.
 
     """
-    toc_processed = ['<a id="table-of-contents"></a>\n'] + toc_headlines[:]
+    if not github:
+        toc_processed = ['<a id="table-of-contents"></a>\n'] + toc_headlines[:]
+    else:
+        toc_processed = toc_headlines[:]
     processed = []
     for line in body:
         processed.append(line)
@@ -232,6 +241,10 @@ if __name__ == '__main__':
             action='store_true', 
             help='add [back to top] links.'
             )
+    parser.add_argument('-g', '--github', 
+            action='store_true', 
+            help='use Github-compatible link styles'
+            )
     parser.add_argument('-s', '--spacer', 
             default=0, 
             type=int, 
@@ -242,7 +255,6 @@ if __name__ == '__main__':
             action='store_true', 
             help='create the table of contents without internal links'
             )
-
     parser.add_argument('-v', '--version', 
             action='version', 
             version='%s' %__version__
@@ -251,7 +263,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     raw_contents = get_lines(args.InputFile)
-    processed_contents, raw_headlines = tag_and_collect(raw_contents)
+
+    processed_contents, raw_headlines = tag_and_collect(raw_contents, github=args.github)
     
     processed_headlines = create_toc(raw_headlines, hyperlink=not args.nolink)
 
@@ -259,7 +272,7 @@ if __name__ == '__main__':
         processed_contents = raw_contents
 
     if args.back_to_top:
-        processed_headlines, processed_contents = add_backtotop(processed_headlines, processed_contents)
+        processed_headlines, processed_contents = add_backtotop(processed_headlines, processed_contents, github=args.github)
     
     cont = build_markdown(processed_headlines, processed_contents, args.spacer)
     output_markdown(cont, args.output)
