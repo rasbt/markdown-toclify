@@ -46,8 +46,11 @@
 #
 
 import argparse
+import re
 
 __version__ = '1.3.0'
+
+valid_chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-'
 
 def dashify_headline(line):
     """
@@ -65,8 +68,11 @@ def dashify_headline(line):
     level = stripped_right.count('#')
     stripped_both = stripped_right.lstrip('#')
     stripped_wspace = stripped_both.strip()
-    dashified = "-".join(stripped_wspace.split(' '))
+    rem_nonvalids = ''.join([ c if c in valid_chars else ' ' for c in stripped_wspace])
+    dashified = '-'.join(rem_nonvalids.split(' '))
     dashified = dashified.lower()
+    dashified = re.sub(r'(-)\1+', r'\1', dashified) # remove duplicate dashes
+    dashified = dashified.strip('-')
     if level > 6:   # HTML supports headlines only up to <h6>
         level = 6
     return stripped_wspace, dashified, level
@@ -117,7 +123,7 @@ def tag_and_collect(in_contents, github=False):
             stripped, dashed, level = dashify_headline(line)
             id_tag = '<a id="%s"></a>' %(dashed)
             headlines.append((stripped, dashed, level))
-            
+            print('idtag', id_tag)
             if not github:
                 out_contents.append(id_tag)
 

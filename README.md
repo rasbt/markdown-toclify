@@ -102,4 +102,3 @@ Command:
 
 ![Output file 1](./images/test_output_2.png)
 
-
