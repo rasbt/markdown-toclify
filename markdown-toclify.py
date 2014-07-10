@@ -48,7 +48,7 @@
 import argparse
 import re
 
-__version__ = '1.3.0'
+__version__ = '1.3.1'
 
 valid_chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-'
 
@@ -68,11 +68,14 @@ def dashify_headline(line):
     level = stripped_right.count('#')
     stripped_both = stripped_right.lstrip('#')
     stripped_wspace = stripped_both.strip()
-    rem_nonvalids = ''.join([ c if c in valid_chars else ' ' for c in stripped_wspace])
+
+    replaced_colon = stripped_wspace.replace('.', '')
+    rem_nonvalids = ''.join([ c if c in valid_chars else ' ' for c in replaced_colon])
     dashified = '-'.join(rem_nonvalids.split(' '))
     dashified = dashified.lower()
     dashified = re.sub(r'(-)\1+', r'\1', dashified) # remove duplicate dashes
     dashified = dashified.strip('-')
+
     if level > 6:   # HTML supports headlines only up to <h6>
         level = 6
     return stripped_wspace, dashified, level
