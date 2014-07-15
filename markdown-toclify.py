@@ -48,7 +48,7 @@
 import argparse
 import re
 
-__version__ = '1.3.1'
+__version__ = '1.4.0'
 
 valid_chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-'
 
@@ -69,8 +69,10 @@ def dashify_headline(line):
     stripped_both = stripped_right.lstrip('#')
     stripped_wspace = stripped_both.strip()
 
+    # character replacements for GitHub compatibility
     replaced_colon = stripped_wspace.replace('.', '')
-    rem_nonvalids = ''.join([ c if c in valid_chars else ' ' for c in replaced_colon])
+    replaced_slash = stripped_wspace.replace('/', '')
+    rem_nonvalids = ''.join([c if c in valid_chars else ' ' for c in replaced_slash])
     dashified = '-'.join(rem_nonvalids.split(' '))
     dashified = dashified.lower()
     dashified = re.sub(r'(-)\1+', r'\1', dashified) # remove duplicate dashes
@@ -108,12 +110,12 @@ def tag_and_collect(in_contents, github=False):
             above the header lines (if github is False).
 
         2nd list:
-            A list of 2-value tuples, where the first value
-            represents the string that was inserted assigned
-            to the IDs in the anchor tags, and the second value
-            is an integer that reprents the headline level.
+            A list of 3-value sublists, where the first value
+            represents the heading, the second value the string
+            that was inserted assigned to the IDs in the anchor tags, 
+            and the third value is an integer that reprents the headline level.
             E.g.,
-            [('some header lvl3', 'some-header-lvl3', 3), ...]
+            [['some header lvl3', 'some-header-lvl3', 3], ...]
 
     """
     out_contents = []
@@ -125,13 +127,29 @@ def tag_and_collect(in_contents, github=False):
         elif line.startswith('#'):
             stripped, dashed, level = dashify_headline(line)
             id_tag = '<a id="%s"></a>' %(dashed)
-            headlines.append((stripped, dashed, level))
+            headlines.append([stripped, dashed, level])
             if not github:
                 out_contents.append(id_tag)
 
         out_contents.append(line)
     return out_contents, headlines
 
+
+def positioning_headlines(headlines):
+    """ 
+    Strips unnecessary whitespaces/tabs if the first header is not left-aligned. 
+
+    """
+
+    left_just = False
+    for row in headlines:
+        if row[-1] == 1:
+            left_just = True
+            break
+    if not left_just:
+        for row in headlines:
+            row[-1] -= 1
+    return headlines
 
 def create_toc(headlines, hyperlink=True):
     """
@@ -273,8 +291,12 @@ if __name__ == '__main__':
     raw_contents = get_lines(args.InputFile)
 
     processed_contents, raw_headlines = tag_and_collect(raw_contents, github=args.github)
+
+    leftjustified_headlines = positioning_headlines(raw_headlines)
+
+    processed_headlines = create_toc(leftjustified_headlines, hyperlink=not args.nolink)
+
     
-    processed_headlines = create_toc(raw_headlines, hyperlink=not args.nolink)
 
     if args.nolink:
         processed_contents = raw_contents

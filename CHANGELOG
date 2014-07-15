@@ -1,3 +1,19 @@
+## Changelog
+
+
+
+Version 1.4.0
+----------------
+
+- smart re-indentation: Table of contents will be shifted one tab to the left if no level-1 heading can be found
+
+
+Version 1.3.2
+----------------
+
+- improved GitHub-compatibility (stripping of slashes instead of dash-replacement)
+
+
 Version 1.3.1
 ----------------
 
