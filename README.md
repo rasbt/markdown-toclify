@@ -1,7 +1,7 @@
 markdown-toclify
 ================
 
-markdown-toclify is a Python command line script that adds a **Table of Contents** with internal section-links to Markdown documents.
+markdown_toclify.py is a Python command line script that adds a **Table of Contents** with internal section-links to Markdown documents.
 
 
 <hr>
@@ -29,7 +29,7 @@ markdown-toclify is a Python command line script that adds a **Table of Contents
 The usage is quite simple, you just need to provide a Markdown-formatted input file and the modified Markdown contents will be printed to the standard output screen. 
 
 
-	./markdown-toclify.py input.md
+	./markdown_toclify.py input.md
 	
 <br>
 
@@ -44,7 +44,7 @@ optional arguments:
   -o output.md, --output output.md
                         path to the Markdown output file
   -b, --back_to_top     add [back to top] links.
-  -g, --github          use Github-compatible link styles
+  -g, --github          omits id-anchor tags (recommended for GitHub)
   -s pixels, --spacer pixels
                         add horizontal space (in pixels) after the table of contents
   -n, --nolink          create the table of contents without internal links
@@ -53,13 +53,6 @@ optional arguments:
 
 
 <br>
-
-
-
-
-
-
-
 <br>
 
 #Examples
@@ -81,7 +74,7 @@ optional arguments:
 
 Command:
 
-	./markdown-toclify.py input.md -o output.md
+	./markdown_toclify.py input.md -o output.md
 
 <br>
 
@@ -96,9 +89,9 @@ Command:
 
 Command:
 
-	./markdown-toclify.py input.md -o output.md -b -s 100
+	./markdown_toclify.py input.md -o output.md -b -s 100
 	
 <br>
 
-![Output file 1](./images/test_output_2.png)
+![Output file 2](./images/test_output_2.png)
 

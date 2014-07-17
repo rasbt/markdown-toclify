@@ -17,40 +17,40 @@
 # Updates for this script will be available at 
 # https://github.com/rasbt/markdown-toclify
 #
-#
-# E.g., the structure of the table of contents
-# in Markdown syntax would look like this:
-#
-########################################################
-#
-#
-# - [some level1 header](#some-level1-header)
-#     - [some level2 header](#some-level2-header)
-#         - [some level3 header](#some-level3-header)
-#   ...
-# - [another level1 header](#internal link)
-#
-#
-# <a id='some-level1-header'></a>
-# # some level1 header
-#
-# ...
-#
-########################################################
-#
-#
-# USAGE:
-# 
-# markdown-toclify.py input.md -o output.md
-#
+# for more information about the usage:
+# markdown-toclify.py --help
 #
 
 import argparse
 import re
 
-__version__ = '1.4.0'
 
-valid_chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-'
+__version__ = '1.5.0'
+
+VALIDS = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-'
+
+
+def read_lines(in_file):
+    """Returns a list of lines from a input markdown file."""
+
+    with open(in_file, 'r') as inf:
+        in_contents = inf.read().split('\n')
+    return in_contents
+
+
+def remove_lines(lines, remove=('[[back to top]', '<a class="mk-toclify"')):
+    """Removes existing [back to top] links and <a id> tags."""
+    
+    if not remove:
+        return lines[:]
+    
+    out = []
+    for l in lines:
+        if l.startswith(remove):
+            continue
+        out.append(l)
+    return out
+    
 
 def dashify_headline(line):
     """
@@ -64,44 +64,35 @@ def dashify_headline(line):
     ('Some header lvl3', 'some-header-lvl3', 3)
 
     """
-    stripped_right = line.rstrip('#')
-    level = stripped_right.count('#')
+    stripped_right = line.rstrip('#') 
     stripped_both = stripped_right.lstrip('#')
+    level = len(stripped_right) - len(stripped_both)
     stripped_wspace = stripped_both.strip()
 
-    # character replacements for GitHub compatibility
+    # character replacements
     replaced_colon = stripped_wspace.replace('.', '')
     replaced_slash = stripped_wspace.replace('/', '')
-    rem_nonvalids = ''.join([c if c in valid_chars else ' ' for c in replaced_slash])
-    dashified = '-'.join(rem_nonvalids.split(' '))
-    dashified = dashified.lower()
-    dashified = re.sub(r'(-)\1+', r'\1', dashified) # remove duplicate dashes
-    dashified = dashified.strip('-')
+    rem_nonvalids = ''.join([c if c in VALIDS else '-' for c in replaced_slash])
+    
+    lowered = rem_nonvalids.lower()
+    dashified = re.sub(r'(-)\1+', r'\1', lowered) # remove duplicate dashes
+    dashified = dashified.strip('-') # strip dashes from start and end
 
     if level > 6:   # HTML supports headlines only up to <h6>
         level = 6
-    return stripped_wspace, dashified, level
-
-
-def get_lines(in_filename):
+    return [stripped_wspace, dashified, level]
+    
+    
+    
+def tag_and_collect(lines, id_tag=True, back_links=False):
     """
-    Returns contents of a text file as list
-    of sublists that represent individual lines.
-
-    """
-    with open(in_filename, 'r') as in_file:
-        in_contents = in_file.read().split('\n')
-    return in_contents
-
-
-def tag_and_collect(in_contents, github=False):
-    """
-    Creates and adds ID-anchor tags to a Markdown document content.
+    Gets headlines from the markdown document and creates anchor tags.
 
     Keyword arguments:
-        in_contents: a list of sublists where every sublist
+        lines: a list of sublists where every sublist
             represents a line from a Markdown document.
-        github: If true, creates Github-compatible markdown (omits the <a id> tags)
+        id_tag: if true, creates inserts a the <a id> tags (not req. by GitHub)
+        back_links: if true, adds "back to top" links below each headline
 
     Returns a tuple of 2 lists:
         1st list:
@@ -120,21 +111,21 @@ def tag_and_collect(in_contents, github=False):
     """
     out_contents = []
     headlines = []
-    for line in in_contents:
-        if line.startswith(('<a id', '[[back to top](#table-of-contents)]')):
-            continue
-            # removes already existing modifications
-        elif line.startswith('#'):
-            stripped, dashed, level = dashify_headline(line)
-            id_tag = '<a id="%s"></a>' %(dashed)
-            headlines.append([stripped, dashed, level])
-            if not github:
+    for l in lines:
+        saw_headline = False
+        if l.startswith('#'):
+            saw_headline = True
+            dashified = dashify_headline(l)
+            if id_tag:
+                id_tag = '<a class="mk-toclify" id="%s"></a>' %(dashified[1])
                 out_contents.append(id_tag)
-
-        out_contents.append(line)
+            headlines.append(dashified)
+        out_contents.append(l)
+        if back_links and saw_headline:
+            out_contents.append('[[back to top](#table-of-contents)]')
     return out_contents, headlines
-
-
+    
+    
 def positioning_headlines(headlines):
     """ 
     Strips unnecessary whitespaces/tabs if the first header is not left-aligned. 
@@ -150,24 +141,32 @@ def positioning_headlines(headlines):
         for row in headlines:
             row[-1] -= 1
     return headlines
+    
 
-def create_toc(headlines, hyperlink=True):
+def create_toc(headlines, hyperlink=True, top_link=False):
     """
     Creates the table of contents from the headline list
     that was returned by the tag_and_collect function.
 
     Keyword Arguments:
-        headlines: list of tuples  
-            e.g., ('Some header lvl3', 'Some-header-lvl3', 3)
+        headlines: list of lists  
+            e.g., ['Some header lvl3', 'some-header-lvl3', 3]
         hyperlink: Creates hyperlinks in Markdown format if True,
-            e.g., '- [Some header lvl1](#Some-header-lvl1)'
+            e.g., '- [Some header lvl1](#some-header-lvl1)'
+        top_link: if true, add a id tag for linking the table
+            of contents itself (for the back-to-top-links)
 
     Returns  a list of headlines for a table of contents
     in Markdown format,
-    e.g., ['        - [Some header lvl3](#Some-header-lvl3)', ...]
+    e.g., ['        - [Some header lvl3](#some-header-lvl3)', ...]
 
     """
-    processed = ['#Table of Contents']
+    
+    processed = []
+    if top_link:
+        processed.append('<a class="mk-toclify" id="table-of-contents"></a>\n')
+    processed.append('#Table of Contents')
+    
     for line in headlines:
         if hyperlink:
             item = '%s- [%s](#%s)' %((line[2]-1)*'    ', line[0], line[1])
@@ -176,25 +175,8 @@ def create_toc(headlines, hyperlink=True):
         processed.append(item)
     processed.append('\n')
     return processed
-
-
-def add_backtotop(toc_headlines, body, github=False):
-    """
-    Adds internal "[back to top]" links to the Markdown document for
-    jumping back to the table of contents.
-
-    """
-    if not github:
-        toc_processed = ['<a id="table-of-contents"></a>\n'] + toc_headlines[:]
-    else:
-        toc_processed = toc_headlines[:]
-    processed = []
-    for line in body:
-        processed.append(line)
-        if line.startswith('#'):
-            processed.append('[[back to top](#table-of-contents)]')
-    return toc_processed, processed
-
+    
+    
 
 def build_markdown(toc_headlines, body, spacer=0):
     """
@@ -217,8 +199,8 @@ def build_markdown(toc_headlines, body, spacer=0):
     else:
         markdown = "\n".join(toc_headlines + body)
     return markdown
-
-
+    
+    
 def output_markdown(markdown_cont, outfile=None):
     """
     Prints markdown contents to the standard output screen, or
@@ -231,6 +213,7 @@ def output_markdown(markdown_cont, outfile=None):
     else:
         print(markdown_cont)
 
+    
 
 if __name__ == '__main__':
 
@@ -269,7 +252,7 @@ if __name__ == '__main__':
             )
     parser.add_argument('-g', '--github', 
             action='store_true', 
-            help='use Github-compatible link styles'
+            help='omits id-anchor tags (recommended for GitHub)'
             )
     parser.add_argument('-s', '--spacer', 
             default=0, 
@@ -288,21 +271,25 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    raw_contents = get_lines(args.InputFile)
+    raw_contents = read_lines(args.InputFile)
+    
 
-    processed_contents, raw_headlines = tag_and_collect(raw_contents, github=args.github)
+    cleaned_contents = remove_lines(raw_contents, remove=('[[back to top]', '<a class="mk-toclify"'))
+ 
+ 
+    processed_contents, raw_headlines = tag_and_collect(
+                                            cleaned_contents, 
+                                            id_tag=not args.github,
+                                            back_links=args.back_to_top,
+                                            )
 
     leftjustified_headlines = positioning_headlines(raw_headlines)
 
     processed_headlines = create_toc(leftjustified_headlines, hyperlink=not args.nolink)
 
-    
 
     if args.nolink:
-        processed_contents = raw_contents
+        processed_contents = cleaned_contents
 
-    if args.back_to_top:
-        processed_headlines, processed_contents = add_backtotop(processed_headlines, processed_contents, github=args.github)
-    
     cont = build_markdown(processed_headlines, processed_contents, args.spacer)
     output_markdown(cont, args.output)
