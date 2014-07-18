@@ -71,7 +71,7 @@ def dashify_headline(line):
 
     # character replacements
     replaced_colon = stripped_wspace.replace('.', '')
-    replaced_slash = stripped_wspace.replace('/', '')
+    replaced_slash = replaced_colon.replace('/', '')
     rem_nonvalids = ''.join([c if c in VALIDS else '-' for c in replaced_slash])
     
     lowered = rem_nonvalids.lower()
