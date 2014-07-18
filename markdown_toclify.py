@@ -285,7 +285,7 @@ if __name__ == '__main__':
 
     leftjustified_headlines = positioning_headlines(raw_headlines)
 
-    processed_headlines = create_toc(leftjustified_headlines, hyperlink=not args.nolink)
+    processed_headlines = create_toc(leftjustified_headlines, hyperlink=not args.nolink,  top_link=not args.nolink and not args.github)
 
 
     if args.nolink:
