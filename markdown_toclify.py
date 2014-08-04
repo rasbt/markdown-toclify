@@ -25,9 +25,9 @@ import argparse
 import re
 
 
-__version__ = '1.5.0'
+__version__ = '1.5.1'
 
-VALIDS = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-'
+VALIDS = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-&'
 
 
 def read_lines(in_file):
@@ -77,6 +77,9 @@ def dashify_headline(line):
     lowered = rem_nonvalids.lower()
     dashified = re.sub(r'(-)\1+', r'\1', lowered) # remove duplicate dashes
     dashified = dashified.strip('-') # strip dashes from start and end
+    
+    # exception '&' (double-dash in github)
+    dashified = dashified.replace('-&-', '--')
 
     if level > 6:   # HTML supports headlines only up to <h6>
         level = 6

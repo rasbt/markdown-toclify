@@ -1,5 +1,11 @@
 ## Changelog
 
+Version 1.5.1
+----------------
+
+- handling special GitHub case "&", which is now substituted by a "--"
+
+
 Version 1.5.0
 ----------------
 
