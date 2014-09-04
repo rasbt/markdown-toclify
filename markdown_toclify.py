@@ -187,7 +187,7 @@ def create_toc(headlines, hyperlink=True, top_link=False):
     processed = []
     if top_link:
         processed.append('<a class="mk-toclify" id="table-of-contents"></a>\n')
-    processed.append('#Table of Contents')
+    processed.append('# Table of Contents')
     
     for line in headlines:
         if hyperlink:
