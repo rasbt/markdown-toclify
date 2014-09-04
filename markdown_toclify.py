@@ -25,10 +25,9 @@ import argparse
 import re
 
 
-__version__ = '1.5.1'
+__version__ = '1.6.0'
 
 VALIDS = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-&'
-
 
 def read_lines(in_file):
     """Returns a list of lines from a input markdown file."""
@@ -81,8 +80,6 @@ def dashify_headline(line):
     # exception '&' (double-dash in github)
     dashified = dashified.replace('-&-', '--')
 
-    if level > 6:   # HTML supports headlines only up to <h6>
-        level = 6
     return [stripped_wspace, dashified, level]
     
     
@@ -116,13 +113,35 @@ def tag_and_collect(lines, id_tag=True, back_links=False):
     headlines = []
     for l in lines:
         saw_headline = False
+        
+        orig_len = len(l)
+        l = l.lstrip()
+        
         if l.startswith('#'):
+            
+            # comply with new markdown standards
+            
+            # not a headline if '#' not followed by whitespace '##no-header':
+            if not l.lstrip('#').startswith(' '): 
+                continue
+            # not a headline if more than 6 '#':
+            if len(l) - len(l.lstrip('#')) > 6  : 
+                continue    
+            # headers can be indented by at most 3 spaces:
+            if orig_len - len(l) > 3:
+                continue
+            
+            # ignore empty headers
+            if not set(l) - {'#', ' '}:
+                continue
+                
             saw_headline = True
             dashified = dashify_headline(l)
             if id_tag:
                 id_tag = '<a class="mk-toclify" id="%s"></a>' %(dashified[1])
                 out_contents.append(id_tag)
             headlines.append(dashified)
+            
         out_contents.append(l)
         if back_links and saw_headline:
             out_contents.append('[[back to top](#table-of-contents)]')

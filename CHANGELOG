@@ -1,4 +1,15 @@
-## Changelog
+CHANGELOG
+=========
+
+Version 1.6.0
+----------------
+
+- changes to comply with the new markdown standard 09/03/2014 (http://jgm.github.io/stmd/spec.htm)
+
+1) More than six # characters is not a header 
+2) Space is required between the # characters and the header’s contents
+3) Headers can be indented by at most 3 spaces:
+
 
 Version 1.5.1
 ----------------
