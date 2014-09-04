@@ -3,6 +3,8 @@ markdown-toclify
 
 markdown_toclify.py is a Python command line script that adds a **Table of Contents** with internal section-links to Markdown documents.
 
+**Compatible with [Standard Markdown](http://standardmarkdown.com).**
+
 
 <hr>
 
