@@ -1,6 +1,17 @@
 CHANGELOG
 =========
 
+Version 1.7.0
+----------------
+
+- added --exlude_h argument to exclude specified header levels from the table of contents.
+- added --placeholder argument to insert the table of contents at a particular
+  position in the document.
+- added --no_toc_header argument to suppress the table of contents header
+- added markdown_toclify wrapper function and added markdown_toclify.
+  as module to PyPI.
+
+
 Version 1.6.0
 ----------------
 
