@@ -5,7 +5,7 @@ markdown_toclify.py is a Python command line script that adds a **Table of Conte
 
 This project is hosted at: [https://github.com/rasbt/markdown-toclify](https://github.com/rasbt/markdown-toclify).
 
-**Compatible to [CommonMark](http://standardmarkdown.com) (formerly known as Common Markdown).**
+**Compatible to [CommonMark](http://commonmark.org) (formerly known as Common Markdown).**
 
 Sebastian Raschka 2014-2015
 
@@ -17,14 +17,14 @@ Sebastian Raschka 2014-2015
     - [Command line arguments](#command-line-arguments)
     - [Using the Python module](#useing-the-python-module)
 - [Examples](#examples)
-    - [Basic usage](#basic-usage) 
+    - [Basic usage](#basic-usage)
     	- [Input file](#input-file)
     	- [Simple output file](#simple-output-file)
     - [Advanced options](#advanced-options)
     - [Output file with back-to-top links and vertical space](#output-file-with-back-to-top-links-and-vertical-space)
     - [Heading level exclusion](#output-file-with-back-to-top-links-and-vertical-space)
     - [TOC insertion at a placeholder position](#toc-insertion-at-a-placeholder-position)
-  
+
 <hr>
 
 **Requires:**  
@@ -39,11 +39,11 @@ Sebastian Raschka 2014-2015
 
 You can simply copy the stand_alone script [./markdown_toclify/markdown_toclify.py](./markdown_toclify/markdown_toclify.py) to a local directory on your computer and use it from there.
 
-The basic usage is quite simple, you just need to provide a Markdown-formatted input file and the modified Markdown contents will be printed to the standard output screen. 
+The basic usage is quite simple, you just need to provide a Markdown-formatted input file and the modified Markdown contents will be printed to the standard output screen.
 
 
 	./markdown_toclify.py input.md
-	
+
 <br>
 
 ## Command line arguments
@@ -79,7 +79,7 @@ Alternatively, markdown_toclify can be installed via pip
 
 	pip install markdown_toclify
 
-and used from the command line as 
+and used from the command line as
 
 	python -m markown_toclify -h
 
@@ -108,7 +108,7 @@ The markdown_toclify module has the same functionality as the command line tool.
 ### Input file
 [[back to top](#markdown-toclify)]
 
-![Input file](./images/test_input_1.png)
+![Input file](./images/example_1.png)
 
 <br>
 <br>
@@ -122,7 +122,7 @@ Command:
 
 <br>
 
-![Output file 1](./images/test_output_1.png)
+![Output file 1](./images/example_2.png)
 
 
 <br>
@@ -140,10 +140,10 @@ Command:
 Command:
 
 	./markdown_toclify.py input.md -o output.md -b -s 100
-	
+
 <br>
 
-![Output file 2](./images/test_output_2.png)
+![Output file 2](./images/example_3.png)
 
 
 <br>
@@ -154,17 +154,9 @@ Command:
 
 Command:
 
-	./markdown_toclify.py test_input_2.md -o test2_output.md --exlude_h 2,3
+	./markdown_toclify.py test_input_2.md -o test2_output.md --exclude_h 2,3
 
-
-**Input**
-<br>
-
-![Input file 2](./images/test_input_2.png)
-
-**Output**
-
-![Output file 3](./images/test_output_3.png)
+![Output file 3](./images/example_4.png)
 
 <br>
 <br>
@@ -180,10 +172,8 @@ Command:
 **Input**
 <br>
 
-![Input file 3](./images/test_input_3.png)
+![Input file 3](./images/example_5.png)
 
 **Output**
 
-![Output file 4](./images/test_output_4.png)
-
-
+![Output file 4](./images/example_6.png)

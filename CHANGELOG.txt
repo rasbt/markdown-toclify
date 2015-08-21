@@ -1,6 +1,12 @@
 CHANGELOG
 =========
 
+Version 1.7.1
+----------------
+- fixed bug that headers are stripped from the output if there was
+no space between "#" and the first letter as in "#header".
+
+
 Version 1.7.0
 ----------------
 
@@ -17,7 +23,7 @@ Version 1.6.0
 
 - changes to comply with the new markdown standard 09/03/2014 (http://jgm.github.io/stmd/spec.htm)
 
-1) More than six # characters is not a header 
+1) More than six # characters is not a header
 2) Space is required between the # characters and the header’s contents
 3) Headers can be indented by at most 3 spaces:
 
@@ -62,7 +68,7 @@ Version 1.3.0
 Version 1.2.1
 ----------------
 
-- turn headlines with 7 pounds (`####### headline`) or more into a 
+- turn headlines with 7 pounds (`####### headline`) or more into a
 level 6-nested headline since HTML only supports headlines
 1-6 (`<h1>, <h2>, ... , <h6>`)
 
@@ -71,5 +77,5 @@ level 6-nested headline since HTML only supports headlines
 Version 1.2.0
 ----------------
 
-- support for "closed" atx-style headers, 
+- support for "closed" atx-style headers,
   e.g., `### This is an H3 ######`
