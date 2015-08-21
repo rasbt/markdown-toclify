@@ -25,7 +25,7 @@ import argparse
 import re
 
 
-__version__ = '1.7.0'
+__version__ = '1.7.1'
 
 VALIDS = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-&'
 
@@ -120,7 +120,7 @@ def tag_and_collect(lines, id_tag=True, back_links=False, exclude_h=None):
         orig_len = len(l)
         l = l.lstrip()
 
-        if l.startswith('#'):
+        if l.startswith(('# ', '## ', '### ', '#### ', '##### ', '###### ')):
 
             # comply with new markdown standards
 
