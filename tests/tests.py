@@ -121,10 +121,14 @@ def test_remove_lines():
 
 
 
-def test_dashify_headline():
+def test_slugify_headline():
     in1 = '### some headline lvl3'
+    out1 = 'some-headline-lvl3'
+    out2 = 'someheadlinelvl3'
 
-    assert(mt.dashify_headline(in1) == ['some headline lvl3', 'some-headline-lvl3', 3])
+    assert(mt.slugify_headline(in1) == ['some headline lvl3', out1, 3])
+    assert(mt.slugify_headline(in1, False) == ['some headline lvl3', out1, 3])
+    assert(mt.slugify_headline(in1, True) == ['some headline lvl3', out2, 3])
 
 
 
