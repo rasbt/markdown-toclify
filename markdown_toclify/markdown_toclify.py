@@ -87,7 +87,8 @@ def slugify_headline(line, remove_dashes=False):
 
     return [stripped_wspace, slugified, level]
 
-def tag_and_collect(lines, id_tag=True, back_links=False, exclude_h=None):
+
+def tag_and_collect(lines, id_tag=True, back_links=False, exclude_h=None, remove_dashes=False):
     """
     Gets headlines from the markdown document and creates anchor tags.
 
@@ -141,14 +142,14 @@ def tag_and_collect(lines, id_tag=True, back_links=False, exclude_h=None):
                 continue
 
             saw_headline = True
-            dashified = dashify_headline(l)
+            slugified = slugify_headline(l, remove_dashes)
 
-            if not exclude_h or not dashified[-1] in exclude_h:
+            if not exclude_h or not slugified[-1] in exclude_h:
                 if id_tag:
                     id_tag = '<a class="mk-toclify" id="%s"></a>'\
-                              % (dashified[1])
+                              % (slugified[1])
                     out_contents.append(id_tag)
-                headlines.append(dashified)
+                headlines.append(slugified)
 
         out_contents.append(l)
         if back_links and saw_headline:
