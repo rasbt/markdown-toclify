@@ -254,7 +254,7 @@ def output_markdown(markdown_cont, output_file):
 def markdown_toclify(input_file, output_file=None, github=False,
                      back_to_top=False, nolink=False,
                      no_toc_header=False, spacer=0, placeholder=None,
-                     exclude_h=None):
+                     exclude_h=None, remove_dashes=False):
     """ Function to add table of contents to markdown files.
 
     Parameters
@@ -288,6 +288,9 @@ def markdown_toclify(input_file, output_file=None, github=False,
         Excludes header levels, e.g., if [2, 3], ignores header
         levels 2 and 3 in the TOC.
 
+      remove_dashes: bool (default: False)
+        Removes dashes from headline slugs
+
     Returns
     -----------
     cont: str
@@ -301,6 +304,7 @@ def markdown_toclify(input_file, output_file=None, github=False,
                                             id_tag=not github,
                                             back_links=back_to_top,
                                             exclude_h=exclude_h,
+                                            remove_dashes=remove_dashes
                                             )
 
     leftjustified_headlines = positioning_headlines(raw_headlines)
