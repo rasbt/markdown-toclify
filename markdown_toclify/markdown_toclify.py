@@ -52,7 +52,7 @@ def remove_lines(lines, remove=('[[back to top]', '<a class="mk-toclify"')):
     return out
 
 
-def dashify_headline(line):
+def slugify_headline(line, remove_dashes=False):
     """
     Takes a header line from a Markdown document and
     returns a tuple of the
@@ -76,14 +76,16 @@ def dashify_headline(line):
                              else '-' for c in replaced_slash])
 
     lowered = rem_nonvalids.lower()
-    dashified = re.sub(r'(-)\1+', r'\1', lowered)  # remove duplicate dashes
-    dashified = dashified.strip('-')  # strip dashes from start and end
+    slugified = re.sub(r'(-)\1+', r'\1', lowered)  # remove duplicate dashes
+    slugified = slugified.strip('-')  # strip dashes from start and end
 
     # exception '&' (double-dash in github)
-    dashified = dashified.replace('-&-', '--')
+    slugified = slugified.replace('-&-', '--')
 
-    return [stripped_wspace, dashified, level]
+    if remove_dashes:
+        slugified = slugified.replace('-','')
 
+    return [stripped_wspace, slugified, level]
 
 def tag_and_collect(lines, id_tag=True, back_links=False, exclude_h=None):
     """
