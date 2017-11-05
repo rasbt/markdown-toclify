@@ -1,7 +1,7 @@
 from distutils.core import setup
 
 setup(name='markdown_toclify',
-      version='0.1.7',
+      version='0.1.8',
       description='A Python module to adda a Table of Contents with internal section-links to Markdown documents.',
       author='Sebastian Raschka',
       author_email='se.raschka@gmail.com',

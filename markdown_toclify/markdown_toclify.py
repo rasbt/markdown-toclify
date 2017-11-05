@@ -25,7 +25,7 @@ import argparse
 import re
 
 
-__version__ = '1.7.1'
+__version__ = '1.7.2'
 
 VALIDS = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-&'
 

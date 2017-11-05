@@ -8,5 +8,5 @@ from .markdown_toclify import positioning_headlines
 from .markdown_toclify import slugify_headline
 from .markdown_toclify import remove_lines
 
-__version__ = '0.1.7'
+__version__ = '0.1.8'
 
