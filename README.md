@@ -66,6 +66,7 @@ optional arguments:
   --placeholder PLACEHOLDER
                         inserts TOC at the placeholder string instead of inserting it on top of the document
   --no_toc_header       suppresses the Table of Contents header
+  --remove_dashes       Removes dashes from generated slugs
   -v, --version         show program's version number and exit
 </pre>
 
