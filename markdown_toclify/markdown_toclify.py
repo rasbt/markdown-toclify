@@ -376,6 +376,9 @@ def commandline():
     parser.add_argument('--placeholder',
                         type=str,
                         help='inserts TOC at the placeholder string instead of inserting it on top of the document')
+    parser.add_argument('--remove_dashes',
+                        action='store_true',
+                        help='Removes dashes from generated slugs')
     parser.add_argument('--no_toc_header',
                         action='store_true',
                         help='suppresses the Table of Contents header')
@@ -398,7 +401,8 @@ def commandline():
                             no_toc_header=args.no_toc_header,
                             spacer=args.spacer,
                             placeholder=args.placeholder,
-                            exclude_h=exclude_h)
+                            exclude_h=exclude_h,
+                            remove_dashes=args.remove_dashes)
 
     if not args.output:
         print(cont)
