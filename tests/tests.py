@@ -29,16 +29,20 @@ def test_markdown_std():
            'more text'
            ]
     out24 = [['first headline', 'first-headline', 1]]
+    out24_1 = [['first headline', 'firstheadline', 1]]
     assert(mt.tag_and_collect(ex24, id_tag=False)[1] == out24)
+    assert(mt.tag_and_collect(ex24, id_tag=False, remove_dashes=True)[1] == out24_1)
 
-    # A space is required between the # characters and the header’s content:
+    # A space is required between the # characters and the header's content:
     ex25 = ['# first headline',
            'some text',
            '##no headline',
            'more text'
            ]
     out25 = [['first headline', 'first-headline', 1]]
+    out25_1 = [['first headline', 'firstheadline', 1]]
     assert(mt.tag_and_collect(ex25, id_tag=False)[1] == out25)
+    assert(mt.tag_and_collect(ex25, id_tag=False, remove_dashes=True)[1] == out25_1)
 
     # This is not a header, because the first # is escaped:
     ex26 = ['# first headline',
@@ -47,7 +51,9 @@ def test_markdown_std():
            'more text'
            ]
     out26 = [['first headline', 'first-headline', 1]]
+    out26_1 = [['first headline', 'firstheadline', 1]]
     assert(mt.tag_and_collect(ex26, id_tag=False)[1] == out26)
+    assert(mt.tag_and_collect(ex26, id_tag=False, remove_dashes=True)[1] == out26_1)
 
     # Leading and trailing blanks are ignored in parsing inline content:
     ex28 = ['#           first headline',
@@ -55,7 +61,9 @@ def test_markdown_std():
            'more text'
            ]
     out28 = [['first headline', 'first-headline', 1]]
+    out28_1 = [['first headline', 'firstheadline', 1]]
     assert(mt.tag_and_collect(ex28, id_tag=False)[1] == out28)
+    assert(mt.tag_and_collect(ex28, id_tag=False, remove_dashes=True)[1] == out28_1)
 
 
     # One to three spaces indentation are allowed:
@@ -65,7 +73,9 @@ def test_markdown_std():
            'more text'
            ]
     out29 = [['first headline', 'first-headline', 1]]
+    out29_1 = [['first headline', 'firstheadline', 1]]
     assert(mt.tag_and_collect(ex29, id_tag=False)[1] == out29)
+    assert(mt.tag_and_collect(ex29, id_tag=False, remove_dashes=True)[1] == out29_1)
 
     # A closing sequence of # characters is optional:
     ex32 = ['## first headline ##',
@@ -73,7 +83,9 @@ def test_markdown_std():
            'more text'
            ]
     out32 = [['first headline', 'first-headline', 2]]
+    out32_1 = [['first headline', 'firstheadline', 2]]
     assert(mt.tag_and_collect(ex32, id_tag=False)[1] == out32)
+    assert(mt.tag_and_collect(ex32, id_tag=False, remove_dashes=True)[1] == out32_1)
 
     # It need not be the same length as the opening sequence:
     ex33 = ['## first headline ####',
@@ -81,7 +93,9 @@ def test_markdown_std():
            'more text'
            ]
     out33 = [['first headline', 'first-headline', 2]]
+    out33_1 = [['first headline', 'firstheadline', 2]]
     assert(mt.tag_and_collect(ex33, id_tag=False)[1] == out33)
+    assert(mt.tag_and_collect(ex33, id_tag=False, remove_dashes=True)[1] == out33_1)
 
     #A sequence of # characters with a nonspace character following it
     # is not a closing sequence, but counts as part of the contents of the header:
@@ -101,7 +115,9 @@ def test_markdown_std():
            ]
     print(mt.tag_and_collect(ex35, id_tag=False)[1])
     out35 = [['first headline', 'first-headline', 1]]
+    out35_1 = [['first headline', 'firstheadline', 1]]
     assert(mt.tag_and_collect(ex35, id_tag=False)[1] == out35)
+    assert(mt.tag_and_collect(ex35, id_tag=False, remove_dashes=True)[1] == out35_1)
 
 
 
@@ -121,10 +137,14 @@ def test_remove_lines():
 
 
 
-def test_dashify_headline():
+def test_slugify_headline():
     in1 = '### some headline lvl3'
+    out1 = 'some-headline-lvl3'
+    out2 = 'someheadlinelvl3'
 
-    assert(mt.dashify_headline(in1) == ['some headline lvl3', 'some-headline-lvl3', 3])
+    assert(mt.slugify_headline(in1) == ['some headline lvl3', out1, 3])
+    assert(mt.slugify_headline(in1, False) == ['some headline lvl3', out1, 3])
+    assert(mt.slugify_headline(in1, True) == ['some headline lvl3', out2, 3])
 
 
 

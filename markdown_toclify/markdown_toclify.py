@@ -25,7 +25,7 @@ import argparse
 import re
 
 
-__version__ = '1.7.1'
+__version__ = '1.7.2'
 
 VALIDS = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-&'
 
@@ -52,7 +52,7 @@ def remove_lines(lines, remove=('[[back to top]', '<a class="mk-toclify"')):
     return out
 
 
-def dashify_headline(line):
+def slugify_headline(line, remove_dashes=False):
     """
     Takes a header line from a Markdown document and
     returns a tuple of the
@@ -76,16 +76,19 @@ def dashify_headline(line):
                              else '-' for c in replaced_slash])
 
     lowered = rem_nonvalids.lower()
-    dashified = re.sub(r'(-)\1+', r'\1', lowered)  # remove duplicate dashes
-    dashified = dashified.strip('-')  # strip dashes from start and end
+    slugified = re.sub(r'(-)\1+', r'\1', lowered)  # remove duplicate dashes
+    slugified = slugified.strip('-')  # strip dashes from start and end
 
     # exception '&' (double-dash in github)
-    dashified = dashified.replace('-&-', '--')
+    slugified = slugified.replace('-&-', '--')
 
-    return [stripped_wspace, dashified, level]
+    if remove_dashes:
+        slugified = slugified.replace('-','')
+
+    return [stripped_wspace, slugified, level]
 
 
-def tag_and_collect(lines, id_tag=True, back_links=False, exclude_h=None):
+def tag_and_collect(lines, id_tag=True, back_links=False, exclude_h=None, remove_dashes=False):
     """
     Gets headlines from the markdown document and creates anchor tags.
 
@@ -139,14 +142,14 @@ def tag_and_collect(lines, id_tag=True, back_links=False, exclude_h=None):
                 continue
 
             saw_headline = True
-            dashified = dashify_headline(l)
+            slugified = slugify_headline(l, remove_dashes)
 
-            if not exclude_h or not dashified[-1] in exclude_h:
+            if not exclude_h or not slugified[-1] in exclude_h:
                 if id_tag:
                     id_tag = '<a class="mk-toclify" id="%s"></a>'\
-                              % (dashified[1])
+                              % (slugified[1])
                     out_contents.append(id_tag)
-                headlines.append(dashified)
+                headlines.append(slugified)
 
         out_contents.append(l)
         if back_links and saw_headline:
@@ -251,7 +254,7 @@ def output_markdown(markdown_cont, output_file):
 def markdown_toclify(input_file, output_file=None, github=False,
                      back_to_top=False, nolink=False,
                      no_toc_header=False, spacer=0, placeholder=None,
-                     exclude_h=None):
+                     exclude_h=None, remove_dashes=False):
     """ Function to add table of contents to markdown files.
 
     Parameters
@@ -285,6 +288,9 @@ def markdown_toclify(input_file, output_file=None, github=False,
         Excludes header levels, e.g., if [2, 3], ignores header
         levels 2 and 3 in the TOC.
 
+      remove_dashes: bool (default: False)
+        Removes dashes from headline slugs
+
     Returns
     -----------
     cont: str
@@ -298,6 +304,7 @@ def markdown_toclify(input_file, output_file=None, github=False,
                                             id_tag=not github,
                                             back_links=back_to_top,
                                             exclude_h=exclude_h,
+                                            remove_dashes=remove_dashes
                                             )
 
     leftjustified_headlines = positioning_headlines(raw_headlines)
@@ -369,6 +376,9 @@ def commandline():
     parser.add_argument('--placeholder',
                         type=str,
                         help='inserts TOC at the placeholder string instead of inserting it on top of the document')
+    parser.add_argument('--remove_dashes',
+                        action='store_true',
+                        help='Removes dashes from generated slugs')
     parser.add_argument('--no_toc_header',
                         action='store_true',
                         help='suppresses the Table of Contents header')
@@ -391,7 +401,8 @@ def commandline():
                             no_toc_header=args.no_toc_header,
                             spacer=args.spacer,
                             placeholder=args.placeholder,
-                            exclude_h=exclude_h)
+                            exclude_h=exclude_h,
+                            remove_dashes=args.remove_dashes)
 
     if not args.output:
         print(cont)
