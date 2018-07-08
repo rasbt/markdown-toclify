@@ -82,9 +82,9 @@ Alternatively, markdown_toclify can be installed via pip
 
 and used from the command line as
 
-	python -m markown_toclify -h
+	python -m markdown_toclify -h
 
-Furthermore, markown_toclify can also be imported as module and be used within Python. For example,
+Furthermore, markdown_toclify can also be imported as module and be used within Python. For example,
 
     from markdown_toclify import markdown_toclify
     cont = markdown_toclify(input_file='/Users/sebastian/Desktop/test_input.md')
